@@ -3,119 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频播放</title>
+    <title>多视频播放器</title>
     <style>
         body {
             margin: 0;
             padding: 20px;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .player-header {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .player-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .current-video {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
         }
         
         .video-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #333;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 20px;
+            background-color: #222;
+            position: relative;
         }
         
         video {
             width: 100%;
             height: auto;
+            border-radius: 8px;
             display: block;
+            max-height: 500px;
+            background-color: #000;
         }
         
-        .video-title {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .controls {
+        .video-controls {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .nav-controls {
+            display: flex;
             gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
         }
         
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
-        button:active {
-            transform: scale(0.98);
+        .prev-btn {
+            background-color: #ff9800;
+            color: white;
         }
         
-        .info {
+        .next-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .play-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .pause-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .fullscreen-btn {
+            background-color: #9C27B0;
+            color: white;
+        }
+        
+        .video-list-container {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .video-list-title {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .video-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-width: 800px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        .error {
-            color: #d32f2f;
+        .video-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .video-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .video-item.active {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            font-weight: bold;
+        }
+        
+        .video-index {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .progress-container {
+            padding: 0 20px 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .error-message {
             background-color: #ffebee;
+            color: #c62828;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 5px;
+            margin: 20px;
+            display: none;
+        }
+        
+        .instructions {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
             margin-top: 20px;
-            max-width: 800px;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .video-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        /* 自定义滚动条 */
+        .video-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .video-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .video-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .video-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
 <body>
-    <h1 class="video-title">视频播放器</h1>
-    
-    <div class="video-container">
-        <video id="myVideo" controls>
-            <source src="/TG-2025-05-09-225147363.mp4" type="video/mp4">
-            您的浏览器不支持视频播放，请升级浏览器。
-        </video>
+    <div class="container">
+        <div class="player-header">
+            <h1>多视频播放器</h1>
+            <div class="current-video" id="currentVideoTitle">正在播放: /TG-2025-05-09-225147363.mp4</div>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="video-container">
+            <video id="myVideo" controls>
+                <source src="/TG-2025-05-09-225147363.mp4" type="video/mp4">
+                您的浏览器不支持视频播放，请升级浏览器。
+            </video>
+            <div class="video-info">
+                <span id="videoResolution">分辨率: -</span>
+                <span id="videoDuration">时长: -</span>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="time-display">
+                <span id="currentTime">0:00</span>
+                <span id="totalTime">0:00</span>
+            </div>
+        </div>
+        
+        <div class="video-controls">
+            <div class="nav-controls">
+                <button class="prev-btn" onclick="prevVideo()">
+                    <span>◀</span> 上一个
+                </button>
+                <button class="next-btn" onclick="nextVideo()">
+                    下一个 <span>▶</span>
+                </button>
+            </div>
+            
+            <div class="playback-controls">
+                <button class="play-btn" onclick="playVideo()">
+                    <span>▶</span> 播放
+                </button>
+                <button class="pause-btn" onclick="pauseVideo()">
+                    <span>⏸</span> 暂停
+                </button>
+                <button class="fullscreen-btn" onclick="fullscreenVideo()">
+                    <span>⛶</span> 全屏
+                </button>
+            </div>
+        </div>
+        
+        <div class="video-list-container">
+            <div class="video-list-title">
+                <span>📁 视频列表 (共 <span id="videoCount">5</span> 个视频)</span>
+            </div>
+            <div class="video-list" id="videoList">
+                <!-- 视频列表会在这里动态生成 -->
+            </div>
+        </div>
     </div>
     
-    <div class="controls">
-        <button onclick="playVideo()">播放</button>
-        <button onclick="pauseVideo()">暂停</button>
-        <button onclick="muteVideo()">静音</button>
-        <button onclick="unmuteVideo()">取消静音</button>
-        <button onclick="fullscreenVideo()">全屏</button>
-        <button onclick="restartVideo()">重新开始</button>
-    </div>
-    
-    <div class="info">
-        <p><strong>视频文件：</strong>/TG-2025-05-09-225147363.mp4</p>
-        <p><strong>使用方法：</strong></p>
+    <div class="instructions">
+        <h3>使用说明：</h3>
         <ul>
-            <li>点击视频上的控制按钮或使用下方自定义控制按钮</li>
-            <li>如果视频无法播放，请确保文件路径正确</li>
-            <li>支持MP4格式视频文件</li>
+            <li>点击视频列表中的任意视频可以直接播放</li>
+            <li>使用"上一个"和"下一个"按钮切换视频</li>
+            <li>添加更多视频：在代码中找到videoPaths数组，按照格式添加视频路径</li>
+            <li>确保视频文件路径正确，否则会显示错误</li>
+            <li>视频会自动按顺序循环播放</li>
         </ul>
     </div>
     
     <script>
-        // 获取视频元素
+        // 视频路径数组 - 可以在这里添加更多视频
+        const videoPaths = [
+            "/TG-2025-05-09-225147363.mp4",  // 默认第一个
+            "/TG-2025-12-18-193008678.mp4",
+            "/videos/sample-video-1.mp4",
+            "/videos/sample-video-2.mp4",
+            "/media/clip-2025-04-15.mp4",
+            "/TG-2025-06-22-184523789.mp4",
+            "/recordings/meeting-2025-03-10.mp4"
+        ];
+        
+        // 视频标题（可选，如果没有则显示文件名）
+        const videoTitles = [
+            "视频1: 2025年5月9日记录",
+            "视频2: 2025年12月18日记录",
+            "示例视频1",
+            "示例视频2",
+            "2025年4月15日剪辑",
+            "2025年6月22日记录",
+            "2025年3月10日会议记录"
+        ];
+        
+        // 获取DOM元素
         const video = document.getElementById('myVideo');
+        const currentVideoTitle = document.getElementById('currentVideoTitle');
+        const videoList = document.getElementById('videoList');
+        const errorMessage = document.getElementById('errorMessage');
+        const videoCount = document.getElementById('videoCount');
+        const progressFill = document.getElementById('progressFill');
+        const currentTime = document.getElementById('currentTime');
+        const totalTime = document.getElementById('totalTime');
+        const videoResolution = document.getElementById('videoResolution');
+        const videoDuration = document.getElementById('videoDuration');
+        
+        let currentVideoIndex = 0;
+        
+        // 初始化视频列表
+        function initVideoList() {
+            videoList.innerHTML = '';
+            videoCount.textContent = videoPaths.length;
+            
+            videoPaths.forEach((path, index) => {
+                const videoItem = document.createElement('div');
+                videoItem.className = `video-item ${index === currentVideoIndex ? 'active' : ''}`;
+                videoItem.onclick = () => loadVideo(index);
+                
+                const videoName = path.split('/').pop(); // 获取文件名
+                const title = videoTitles[index] || `视频 ${index + 1}: ${videoName}`;
+                
+                videoItem.innerHTML = `
+                    <div>
+                        <strong>${title}</strong><br>
+                        <small style="color: #666;">${path}</small>
+                    </div>
+                    <div class="video-index">${index + 1}</div>
+                `;
+                
+                videoList.appendChild(videoItem);
+            });
+        }
+        
+        // 加载指定索引的视频
+        function loadVideo(index) {
+            // 边界检查
+            if (index < 0) index = videoPaths.length - 1;
+            if (index >= videoPaths.length) index = 0;
+            
+            currentVideoIndex = index;
+            const videoPath = videoPaths[index];
+            const title = videoTitles[index] || `视频 ${index + 1}: ${videoPath.split('/').pop()}`;
+            
+            // 更新UI
+            currentVideoTitle.textContent = `正在播放: ${title}`;
+            
+            // 更新视频列表激活状态
+            document.querySelectorAll('.video-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+            
+            // 加载新视频
+            video.src = videoPath;
+            video.load();
+            
+            // 隐藏错误消息
+            errorMessage.style.display = 'none';
+            
+            // 尝试播放
+            video.play().catch(e => {
+                console.log("自动播放失败，等待用户交互", e);
+            });
+        }
+        
+        // 上一个视频
+        function prevVideo() {
+            loadVideo(currentVideoIndex - 1);
+        }
+        
+        // 下一个视频
+        function nextVideo() {
+            loadVideo(currentVideoIndex + 1);
+        }
         
         // 播放视频
         function playVideo() {
@@ -127,194 +443,102 @@
             video.pause();
         }
         
-        // 静音
-        function muteVideo() {
-            video.muted = true;
-        }
-        
-        // 取消静音
-        function unmuteVideo() {
-            video.muted = false;
-        }
-        
         // 全屏
         function fullscreenVideo() {
             if (video.requestFullscreen) {
                 video.requestFullscreen();
-            } else if (video.mozRequestFullScreen) { // Firefox
+            } else if (video.mozRequestFullScreen) {
                 video.mozRequestFullScreen();
-            } else if (video.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            } else if (video.webkitRequestFullscreen) {
                 video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE/Edge
+            } else if (video.msRequestFullscreen) {
                 video.msRequestFullscreen();
             }
         }
         
-        // 重新开始
-        function restartVideo() {
-            video.currentTime = 0;
-            video.play();
-        }
-        
-        // 视频加载错误处理
-        video.addEventListener('error', function() {
-            const infoDiv = document.querySelector('.info');
-            infoDiv.innerHTML = `
-                <div class="error">
-                    <h3>视频加载错误</h3>
-                    <p>无法加载视频文件：/TG-2025-05-09-225147363.mp4</p>
-                    <p>可能原因：</p>
-                    <ul>
-                        <li>视频文件不存在或路径不正确</li>
-                        <li>视频文件格式不受支持</li>
-                        <li>服务器无法访问该文件</li>
-                    </ul>
-                    <p>请检查视频文件路径是否正确。</p>
-                </div>
-            `;
-        });
-        
-        // 显示视频信息
-        video.addEventListener('loadedmetadata', function() {
-            const duration = video.duration;
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.floor(duration % 60);
-            
-            const infoDiv = document.querySelector('.info');
-            infoDiv.innerHTML += `
-                <p><strong>视频时长：</strong>${minutes}:${seconds < 10 ? '0' : ''}${seconds}</p>
-                <p><strong>视频尺寸：</strong>${video.videoWidth} × ${video.videoHeight} 像素</p>
-            `;
-        });
-    </script>
-</body>
-</html>        }
-        
-        button:active {
-            transform: scale(0.98);
-        }
-        
-        .info {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-width: 800px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .error {
-            color: #d32f2f;
-            background-color: #ffebee;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-width: 800px;
-        }
-    </style>
-</head>
-<body>
-    <h1 class="video-title">视频播放器</h1>
-    
-    <div class="video-container">
-        <video id="myVideo" controls>
-            <source src="/TG-2025-12-18-193008678.mp4" type="video/mp4">
-            您的浏览器不支持视频播放，请升级浏览器。
-        </video>
-    </div>
-    
-    <div class="controls">
-        <button onclick="playVideo()">播放</button>
-        <button onclick="pauseVideo()">暂停</button>
-        <button onclick="muteVideo()">静音</button>
-        <button onclick="unmuteVideo()">取消静音</button>
-        <button onclick="fullscreenVideo()">全屏</button>
-        <button onclick="restartVideo()">重新开始</button>
-    </div>
-    
-    <div class="info">
-        <p><strong>视频文件：</strong>/TG-2025-12-18-193008678.mp4</p>
-        <p><strong>使用方法：</strong></p>
-        <ul>
-            <li>点击视频上的控制按钮或使用下方自定义控制按钮</li>
-            <li>如果视频无法播放，请确保文件路径正确</li>
-            <li>支持MP4格式视频文件</li>
-        </ul>
-    </div>
-    
-    <script>
-        // 获取视频元素
-        const video = document.getElementById('myVideo');
-        
-        // 播放视频
-        function playVideo() {
-            video.play();
-        }
-        
-        // 暂停视频
-        function pauseVideo() {
-            video.pause();
-        }
-        
-        // 静音
-        function muteVideo() {
-            video.muted = true;
-        }
-        
-        // 取消静音
-        function unmuteVideo() {
-            video.muted = false;
-        }
-        
-        // 全屏
-        function fullscreenVideo() {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.mozRequestFullScreen) { // Firefox
-                video.mozRequestFullScreen();
-            } else if (video.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE/Edge
-                video.msRequestFullscreen();
+        // 更新进度条
+        function updateProgress() {
+            if (video.duration) {
+                const percent = (video.currentTime / video.duration) * 100;
+                progressFill.style.width = `${percent}%`;
+                
+                // 更新时间显示
+                currentTime.textContent = formatTime(video.currentTime);
+                totalTime.textContent = formatTime(video.duration);
             }
         }
         
-        // 重新开始
-        function restartVideo() {
-            video.currentTime = 0;
-            video.play();
+        // 格式化时间 (秒 -> MM:SS)
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
         
         // 视频加载错误处理
         video.addEventListener('error', function() {
-            const infoDiv = document.querySelector('.info');
-            infoDiv.innerHTML = `
-                <div class="error">
-                    <h3>视频加载错误</h3>
-                    <p>无法加载视频文件：/TG-2025-05-09-225147363.mp4</p>
-                    <p>可能原因：</p>
-                    <ul>
-                        <li>视频文件不存在或路径不正确</li>
-                        <li>视频文件格式不受支持</li>
-                        <li>服务器无法访问该文件</li>
-                    </ul>
-                    <p>请检查视频文件路径是否正确。</p>
-                </div>
+            errorMessage.innerHTML = `
+                <strong>视频加载错误</strong><br>
+                无法加载视频: ${videoPaths[currentVideoIndex]}<br>
+                请检查文件路径是否正确，或者视频文件是否存在。
             `;
+            errorMessage.style.display = 'block';
         });
         
-        // 显示视频信息
+        // 视频加载成功
         video.addEventListener('loadedmetadata', function() {
-            const duration = video.duration;
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.floor(duration % 60);
+            // 显示视频信息
+            videoResolution.textContent = `分辨率: ${video.videoWidth} × ${video.videoHeight}`;
+            videoDuration.textContent = `时长: ${formatTime(video.duration)}`;
             
-            const infoDiv = document.querySelector('.info');
-            infoDiv.innerHTML += `
-                <p><strong>视频时长：</strong>${minutes}:${seconds < 10 ? '0' : ''}${seconds}</p>
-                <p><strong>视频尺寸：</strong>${video.videoWidth} × ${video.videoHeight} 像素</p>
-            `;
+            // 更新总时间显示
+            totalTime.textContent = formatTime(video.duration);
         });
+        
+        // 视频播放时更新进度条
+        video.addEventListener('timeupdate', updateProgress);
+        
+        // 视频结束时自动播放下一个
+        video.addEventListener('ended', function() {
+            // 延迟一下，让用户看到视频结束
+            setTimeout(() => {
+                nextVideo();
+            }, 1000);
+        });
+        
+        // 初始化
+        function init() {
+            initVideoList();
+            loadVideo(0);
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // 空格键: 播放/暂停
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (video.paused) {
+                        playVideo();
+                    } else {
+                        pauseVideo();
+                    }
+                }
+                // 左箭头: 上一个视频
+                else if (e.code === 'ArrowLeft') {
+                    prevVideo();
+                }
+                // 右箭头: 下一个视频
+                else if (e.code === 'ArrowRight') {
+                    nextVideo();
+                }
+                // F键: 全屏
+                else if (e.code === 'KeyF') {
+                    fullscreenVideo();
+                }
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = init;
     </script>
 </body>
 </html>
