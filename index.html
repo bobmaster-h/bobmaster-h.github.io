@@ -64,14 +64,14 @@
 <body>
 
 <div id="player-container">
-    <video id="video" controls preload="metadata"></video>
+    <video id="video" controls autoplay muted preload="metadata"></video>
     <div id="current-title">当前视频：美女视频1</div>
     
     <div class="controls">
         <button id="prev-btn">上一首</button>
         <button id="next-btn">下一首</button>
         <select id="play-mode">
-            <option value="loop">循环播放</option>
+            <option value="loop">循环播放（默认）</option>
             <option value="order">顺序播放</option>
             <option value="random">随机播放</option>
         </select>
@@ -82,12 +82,12 @@
 </div>
 
 <script>
-    // 视频列表 - 你可以在这里继续添加新的视频路径和名称
+    // 视频列表 - 请在这里替换为你真实的视频路径（示例中只有第一个是你的路径，其他两个是占位）
     const videoList = [
         { src: "/TG-2025-05-09-225147363.mp4", title: "美女视频1" },
-        { src: "/example-video2.mp4", title: "美女视频2" },
-        { src: "/example-video3.mp4", title: "美女视频3" }
-        // 添加新视频示例：
+        { src: "/example-video2.mp4", title: "美女视频2" },   // 请替换成真实路径
+        { src: "/example-video3.mp4", title: "美女视频3" }    // 请替换成真实路径
+        // 添加更多示例：
         // { src: "/your-new-video.mp4", title: "新视频名称" },
     ];
 
@@ -101,6 +101,8 @@
 
     // 加载指定索引的视频
     function loadVideo(index) {
+        if (index < 0 || index >= videoList.length) return;
+        
         currentIndex = index;
         const v = videoList[index];
         video.innerHTML = `<source src="${v.src}" type="video/mp4">您的浏览器不支持视频播放。`;
@@ -116,7 +118,9 @@
     // 获取下一个视频索引（根据播放模式）
     function getNextIndex() {
         if (playMode.value === "random") {
-            return Math.floor(Math.random() * videoList.length);
+            let next = Math.floor(Math.random() * videoList.length);
+            // 随机模式下避免立即重复同一首（可选）
+            return next;
         } else {
             return (currentIndex + 1) % videoList.length;
         }
@@ -124,27 +128,36 @@
 
     // 下一首
     function playNext() {
-        const nextIndex = getNextIndex();
+        let nextIndex;
+        if (playMode.value === "order") {
+            if (currentIndex >= videoList.length - 1) {
+                return; // 顺序播放到最后一首就停止
+            }
+            nextIndex = currentIndex + 1;
+        } else {
+            nextIndex = getNextIndex();
+        }
         loadVideo(nextIndex);
     }
 
-    // 上一首（总是顺序上一首）
+    // 上一首
     function playPrev() {
         const prevIndex = (currentIndex - 1 + videoList.length) % videoList.length;
         loadVideo(prevIndex);
     }
 
-    // 视频结束时自动播放下一首
+    // 视频自然结束时处理
     video.addEventListener('ended', () => {
-        if (playMode.value === "order") {
-            // 顺序播放：只有不是最后一首才继续
-            if (currentIndex < videoList.length - 1) {
-                playNext();
-            }
-        } else {
-            // 循环和随机都继续
-            playNext();
+        if (playMode.value === "order" && currentIndex >= videoList.length - 1) {
+            return; // 顺序播放最后一首结束就停止
         }
+        playNext();
+    });
+
+    // 重要修复：如果视频路径无效（加载失败），自动跳到下一首（防止循环卡死）
+    video.addEventListener('error', () => {
+        console.warn(`视频加载失败：${videoList[currentIndex].src}，自动跳到下一首`);
+        playNext();
     });
 
     // 初始化播放列表
@@ -159,10 +172,9 @@
     prevBtn.onclick = playPrev;
     nextBtn.onclick = playNext;
 
-    // 默认加载第一首视频（默认模式为循环）
+    // 默认加载第一首视频 + 默认循环模式 + autoplay/muted（保证自动播放下一首）
+    playMode.value = "loop"; // 强制确保默认是循环
     loadVideo(0);
-
-    // 全屏功能：浏览器自带的 controls 里就有全屏按钮，你也可以双击视频全屏
 </script>
 
 </body>
