@@ -1,199 +1,174 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<title>图片 / 视频智能压缩（网页版）</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  font-family: system-ui, -apple-system;
-  background: #020617;
-  color: #e5e7eb;
-  padding: 20px;
-}
-h2,h3 { margin-top: 24px }
-.card {
-  background: #020617;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-input, button, select {
-  width: 100%;
-  margin: 8px 0;
-}
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 15px;
-}
-button:disabled {
-  background: #475569;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-th, td {
-  border-bottom: 1px solid #1e293b;
-  padding: 6px;
-}
-small { color: #94a3b8 }
-progress { width: 100%; }
-a { color: #38bdf8 }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片和视频压缩工具（客户端本地处理）</title>
+    <script src="https://unpkg.com/compressorjs/dist/compressor.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        section { margin-bottom: 40px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        input, button { margin: 10px 0; }
+        #preview, #videoPreview { max-width: 100%; margin-top: 10px; }
+        #result { margin-top: 20px; }
+    </style>
 </head>
-
 <body>
+    <h1>图片和视频压缩工具</h1>
+    <p>所有压缩都在浏览器本地完成，不上传到任何服务器，隐私安全。</p>
 
-<h2>📦 图片 / 视频智能压缩（本地处理）</h2>
+    <section>
+        <h2>图片压缩（支持 JPEG、PNG、WebP 等）</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <label>压缩质量（0-1，越小文件越小，质量越低）：</label>
+        <input type="range" id="imageQuality" min="0" max="1" step="0.01" value="0.8">
+        <span id="qualityValue">0.8</span>
+        <p><strong>推荐设置：</strong>质量 0.8（最佳质量与文件大小平衡，通常压缩 40-70%，肉眼几乎无损）</p>
+        <button id="compressImage">压缩图片</button>
 
-<!-- 图片压缩 -->
-<div class="card">
-<h3>📷 图片（批量 + 智能）</h3>
-<input type="file" id="imgInput" accept="image/*" multiple>
-<button onclick="smartCompressImages()">开始智能压缩</button>
-<table id="imgTable"></table>
-</div>
+        <div id="imageResult"></div>
+        <img id="preview" alt="原图预览">
+        <img id="compressedPreview" alt="压缩后预览">
+    </section>
 
-<!-- 视频压缩 -->
-<div class="card">
-<h3>🎬 视频（本地文件）</h3>
-<input type="file" id="videoInput" accept="video/*" multiple>
+    <section>
+        <h2>视频压缩（简单重编码为 WebM/VP8 或 VP9）</h2>
+        <p>使用浏览器原生 MediaRecorder 进行重编码压缩。推荐比特率 1000000（1Mbps），适合大多数短视频，文件大小大幅减小，同时质量良好。</p>
+        <input type="file" id="videoInput" accept="video/*">
+        <label>比特率（bits/s，越小文件越小）：</label>
+        <input type="number" id="videoBitrate" value="1000000" min="100000" step="100000">
+        <p><strong>推荐设置：</strong>比特率 1000000（1Mbps） - 质量最好且压缩到最小（通常可压缩 50-80%）</p>
+        <button id="compressVideo">压缩视频</button>
 
-<select id="videoMode">
-  <option value="auto">推荐（清晰 + 小）</option>
-  <option value="quality">画质优先</option>
-  <option value="size">体积最小</option>
-</select>
+        <div id="videoResult"></div>
+        <video id="videoPreview" controls></video>
+    </section>
 
-<button onclick="compressVideos()">开始压缩</button>
-<progress id="videoProgress" value="0" max="1"></progress>
+    <script>
+        // 图片部分
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        const imageQuality = document.getElementById('imageQuality');
+        const qualityValue = document.getElementById('qualityValue');
+        const compressImageBtn = document.getElementById('compressImage');
+        const imageResult = document.getElementById('imageResult');
+        const compressedPreview = document.getElementById('compressedPreview');
 
-<table id="videoTable"></table>
-</div>
+        imageQuality.addEventListener('input', () => {
+            qualityValue.textContent = imageQuality.value;
+        });
 
-<!-- 链接说明 -->
-<div class="card">
-<h3>🔗 抖音 / B站链接</h3>
-<p>
-浏览器 <b>不能直接解析</b> 抖音 / B站视频。<br>
-如果你需要「粘贴链接 → 自动下载 + 压缩」，我可以下一步给你配一个可用方案。
-</p>
-</div>
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                imageResult.innerHTML = '';
+                compressedPreview.src = '';
+                compressedPreview.style.display = 'none';
+            }
+        });
 
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+        compressImageBtn.addEventListener('click', () => {
+            const file = imageInput.files[0];
+            if (!file) return alert('请先选择图片');
 
-<script>
-/* ========= 图片智能压缩 ========= */
-async function smartCompressImages() {
-  const table = document.getElementById("imgTable");
-  table.innerHTML =
-    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>压缩率</th><th>下载</th></tr>";
+            new Compressor(file, {
+                quality: parseFloat(imageQuality.value),
+                mimeType: 'image/webp',  // 推荐转为 WebP，更小且质量好
+                success(result) {
+                    const originalSize = (file.size / 1024 / 1024).toFixed(2);
+                    const compressedSize = (result.size / 1024 / 1024).toFixed(2);
+                    const ratio = ((1 - result.size / file.size) * 100).toFixed(1);
 
-  for (const file of imgInput.files) {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    await img.decode();
+                    compressedPreview.src = URL.createObjectURL(result);
+                    compressedPreview.style.display = 'block';
 
-    let bestBlob = null;
-    for (const q of [0.82, 0.75, 0.68]) {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      canvas.getContext("2d").drawImage(img, 0, 0);
-      const blob = await new Promise(r => canvas.toBlob(r, "image/webp", q));
-      if (!bestBlob || blob.size < bestBlob.size) bestBlob = blob;
-    }
+                    imageResult.innerHTML = `
+                        <p>原大小: ${originalSize} MB</p>
+                        <p>压缩后: \( {compressedSize} MB（压缩率 \){ratio}%）</p>
+                        <a href="\( {URL.createObjectURL(result)}" download="compressed. \){result.type.split('/')[1]}">下载压缩图片</a>
+                    `;
+                },
+                error(err) {
+                    console.error(err);
+                    alert('压缩失败');
+                },
+            });
+        });
 
-    const rate = ((1 - bestBlob.size / file.size) * 100).toFixed(1);
+        // 视频部分
+        const videoInput = document.getElementById('videoInput');
+        const videoPreview = document.getElementById('videoPreview');
+        const videoBitrate = document.getElementById('videoBitrate');
+        const compressVideoBtn = document.getElementById('compressVideo');
+        const videoResult = document.getElementById('videoResult');
 
-    table.innerHTML += `
-      <tr>
-        <td>${file.name}</td>
-        <td>${(file.size/1024).toFixed(1)} KB</td>
-        <td>${(bestBlob.size/1024).toFixed(1)} KB</td>
-        <td>${rate}%</td>
-        <td><a href="${URL.createObjectURL(bestBlob)}" download="${file.name}.webp">下载</a></td>
-      </tr>
-    `;
-  }
-}
+        videoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                videoPreview.src = URL.createObjectURL(file);
+                videoPreview.style.display = 'block';
+                videoResult.innerHTML = '';
+            }
+        });
 
-/* ========= 视频压缩（修复稳定版） ========= */
-let ffmpegInstance = null;
+        compressVideoBtn.addEventListener('click', async () => {
+            const file = videoInput.files[0];
+            if (!file) return alert('请先选择视频');
 
-async function getFFmpeg() {
-  if (ffmpegInstance) return ffmpegInstance;
-  const { createFFmpeg } = FFmpeg;
-  ffmpegInstance = createFFmpeg({
-    log: true,
-    progress: p => videoProgress.value = p.ratio
-  });
-  await ffmpegInstance.load();
-  return ffmpegInstance;
-}
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.muted = true;
+            video.playbackRate = 1; // 可加速处理，但可能影响质量
 
-async function compressVideos() {
-  if (videoInput.files.length === 0) {
-    alert("请选择视频");
-    return;
-  }
+            await new Promise((resolve) => {
+                video.onloadedmetadata = resolve;
+            });
 
-  const ffmpeg = await getFFmpeg();
-  const table = document.getElementById("videoTable");
+            await video.play();
 
-  table.innerHTML =
-    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>压缩率</th><th>下载</th></tr>";
+            const stream = video.captureStream();
+            const options = {
+                mimeType: 'video/webm;codecs=vp9', // VP9 更好压缩，兼容性稍差；如需更好兼容用 'video/webm;codecs=vp8'
+                videoBitsPerSecond: parseInt(videoBitrate.value),
+            };
 
-  let i = 0;
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                alert('您的浏览器不支持选定的编码格式，尝试 VP8');
+                options.mimeType = 'video/webm;codecs=vp8';
+            }
 
-  for (const file of videoInput.files) {
-    i++;
-    const input = `in_${i}.mp4`;
-    const output = `out_${i}.mp4`;
+            const mediaRecorder = new MediaRecorder(stream, options);
+            const chunks = [];
 
-    ffmpeg.FS("writeFile", input, await FFmpeg.fetchFile(file));
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
 
-    let crf;
-    if (videoMode.value === "quality") crf = 24;
-    else if (videoMode.value === "size") crf = 30;
-    else crf = 28;
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const originalSize = (file.size / 1024 / 1024).toFixed(2);
+                const compressedSize = (blob.size / 1024 / 1024).toFixed(2);
+                const ratio = ((1 - blob.size / file.size) * 100).toFixed(1);
 
-    await ffmpeg.run(
-      "-i", input,
-      "-vcodec", "libx264",
-      "-crf", String(crf),
-      "-preset", "veryfast",
-      output
-    );
+                const url = URL.createObjectURL(blob);
+                videoResult.innerHTML = `
+                    <p>原大小: ${originalSize} MB</p>
+                    <p>压缩后: \( {compressedSize} MB（压缩率 \){ratio}%）</p>
+                    <video src="${url}" controls></video><br>
+                    <a href="${url}" download="compressed_video.webm">下载压缩视频</a>
+                `;
+            };
 
-    const data = ffmpeg.FS("readFile", output);
-    const blob = new Blob([data.buffer], { type: "video/mp4" });
-    const rate = ((1 - blob.size / file.size) * 100).toFixed(1);
-
-    table.innerHTML += `
-      <tr>
-        <td>${file.name}</td>
-        <td>${(file.size/1024/1024).toFixed(2)} MB</td>
-        <td>${(blob.size/1024/1024).toFixed(2)} MB</td>
-        <td>${rate}%</td>
-        <td><a href="${URL.createObjectURL(blob)}" download="compressed_${file.name}">下载</a></td>
-      </tr>
-    `;
-
-    ffmpeg.FS("unlink", input);
-    ffmpeg.FS("unlink", output);
-  }
-
-  videoProgress.value = 0;
-}
-</script>
-
+            mediaRecorder.start();
+            // 播放完自动停止
+            video.onended = () => mediaRecorder.stop();
+            // 为防止无限播放，设置超时
+            setTimeout(() => {
+                if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+            }, video.duration * 1000 + 5000);
+        });
+    </script>
 </body>
 </html>
