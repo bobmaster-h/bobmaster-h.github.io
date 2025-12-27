@@ -2,16 +2,16 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>智能图片 / 视频压缩 + 链接解析</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>图片 / 视频智能压缩（网页版）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
-  font-family: system-ui;
+  font-family: system-ui, -apple-system;
   background: #020617;
   color: #e5e7eb;
   padding: 20px;
 }
-h2,h3 { margin-top: 30px }
+h2,h3 { margin-top: 24px }
 .card {
   background: #020617;
   border: 1px solid #1e293b;
@@ -19,73 +19,82 @@ h2,h3 { margin-top: 30px }
   padding: 16px;
   margin-bottom: 20px;
 }
-input,button,select {
+input, button, select {
   width: 100%;
   margin: 8px 0;
 }
 button {
   background: #2563eb;
+  color: white;
   border: none;
   padding: 12px;
   border-radius: 8px;
-  color: white;
   font-size: 15px;
+}
+button:disabled {
+  background: #475569;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
-td,th {
+th, td {
   border-bottom: 1px solid #1e293b;
   padding: 6px;
 }
 small { color: #94a3b8 }
-progress { width: 100% }
+progress { width: 100%; }
+a { color: #38bdf8 }
 </style>
 </head>
 
 <body>
 
-<h2>📦 智能压缩工具（本地）</h2>
+<h2>📦 图片 / 视频智能压缩（本地处理）</h2>
 
-<!-- 图片 -->
+<!-- 图片压缩 -->
 <div class="card">
-<h3>📷 批量图片智能压缩</h3>
-<input type="file" accept="image/*" multiple id="imgInput">
-<button onclick="smartImageCompress()">自动智能压缩</button>
+<h3>📷 图片（批量 + 智能）</h3>
+<input type="file" id="imgInput" accept="image/*" multiple>
+<button onclick="smartCompressImages()">开始智能压缩</button>
 <table id="imgTable"></table>
 </div>
 
-<!-- 本地视频 -->
+<!-- 视频压缩 -->
 <div class="card">
-<h3>🎬 本地视频批量压缩</h3>
-<input type="file" accept="video/*" multiple id="videoInput">
+<h3>🎬 视频（本地文件）</h3>
+<input type="file" id="videoInput" accept="video/*" multiple>
+
 <select id="videoMode">
-  <option value="auto">推荐（自动）</option>
+  <option value="auto">推荐（清晰 + 小）</option>
   <option value="quality">画质优先</option>
   <option value="size">体积最小</option>
 </select>
-<button onclick="compressLocalVideos()">开始压缩</button>
-<progress id="vProgress" value="0" max="1"></progress>
+
+<button onclick="compressVideos()">开始压缩</button>
+<progress id="videoProgress" value="0" max="1"></progress>
+
 <table id="videoTable"></table>
 </div>
 
-<!-- 链接解析 -->
+<!-- 链接说明 -->
 <div class="card">
-<h3>🔗 抖音 / B站链接下载 + 压缩</h3>
-<input placeholder="粘贴视频分享链接" id="shareUrl">
-<small>⚠️ 需要你自己的解析接口</small>
-<button onclick="parseAndCompress()">解析并压缩</button>
+<h3>🔗 抖音 / B站链接</h3>
+<p>
+浏览器 <b>不能直接解析</b> 抖音 / B站视频。<br>
+如果你需要「粘贴链接 → 自动下载 + 压缩」，我可以下一步给你配一个可用方案。
+</p>
 </div>
 
 <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
 
 <script>
-/* ========== 图片智能压缩 ========== */
-async function smartImageCompress() {
-  const table = imgTable;
-  table.innerHTML = "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
+/* ========= 图片智能压缩 ========= */
+async function smartCompressImages() {
+  const table = document.getElementById("imgTable");
+  table.innerHTML =
+    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>压缩率</th><th>下载</th></tr>";
 
   for (const file of imgInput.files) {
     const img = new Image();
@@ -93,65 +102,96 @@ async function smartImageCompress() {
     await img.decode();
 
     let bestBlob = null;
-    for (let q of [0.82, 0.75, 0.68]) {
+    for (const q of [0.82, 0.75, 0.68]) {
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
-      canvas.getContext("2d").drawImage(img,0,0);
-      const blob = await new Promise(r=>canvas.toBlob(r,"image/webp",q));
+      canvas.getContext("2d").drawImage(img, 0, 0);
+      const blob = await new Promise(r => canvas.toBlob(r, "image/webp", q));
       if (!bestBlob || blob.size < bestBlob.size) bestBlob = blob;
     }
 
+    const rate = ((1 - bestBlob.size / file.size) * 100).toFixed(1);
+
     table.innerHTML += `
-    <tr>
-      <td>${file.name}</td>
-      <td>${(file.size/1024).toFixed(1)} KB</td>
-      <td>${(bestBlob.size/1024).toFixed(1)} KB</td>
-      <td><a download="${file.name}.webp" href="${URL.createObjectURL(bestBlob)}">下载</a></td>
-    </tr>`;
+      <tr>
+        <td>${file.name}</td>
+        <td>${(file.size/1024).toFixed(1)} KB</td>
+        <td>${(bestBlob.size/1024).toFixed(1)} KB</td>
+        <td>${rate}%</td>
+        <td><a href="${URL.createObjectURL(bestBlob)}" download="${file.name}.webp">下载</a></td>
+      </tr>
+    `;
   }
 }
 
-/* ========== 本地视频压缩 ========== */
-async function compressLocalVideos() {
-  const { createFFmpeg, fetchFile } = FFmpeg;
-  const ffmpeg = createFFmpeg({
-    log:true,
-    progress:p=>vProgress.value=p.ratio
-  });
-  await ffmpeg.load();
+/* ========= 视频压缩（修复稳定版） ========= */
+let ffmpegInstance = null;
 
-  videoTable.innerHTML = "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
+async function getFFmpeg() {
+  if (ffmpegInstance) return ffmpegInstance;
+  const { createFFmpeg } = FFmpeg;
+  ffmpegInstance = createFFmpeg({
+    log: true,
+    progress: p => videoProgress.value = p.ratio
+  });
+  await ffmpegInstance.load();
+  return ffmpegInstance;
+}
+
+async function compressVideos() {
+  if (videoInput.files.length === 0) {
+    alert("请选择视频");
+    return;
+  }
+
+  const ffmpeg = await getFFmpeg();
+  const table = document.getElementById("videoTable");
+
+  table.innerHTML =
+    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>压缩率</th><th>下载</th></tr>";
+
+  let i = 0;
 
   for (const file of videoInput.files) {
-    ffmpeg.FS("writeFile","in.mp4",await fetchFile(file));
-    let crf = videoMode.value==="size"?30:videoMode.value==="quality"?24:28;
+    i++;
+    const input = `in_${i}.mp4`;
+    const output = `out_${i}.mp4`;
 
-    await ffmpeg.run("-i","in.mp4","-vcodec","libx264","-crf",crf,"out.mp4");
-    const data = ffmpeg.FS("readFile","out.mp4");
-    const blob = new Blob([data.buffer],{type:"video/mp4"});
+    ffmpeg.FS("writeFile", input, await FFmpeg.fetchFile(file));
 
-    videoTable.innerHTML += `
-    <tr>
-      <td>${file.name}</td>
-      <td>${(file.size/1024/1024).toFixed(2)} MB</td>
-      <td>${(blob.size/1024/1024).toFixed(2)} MB</td>
-      <td><a href="${URL.createObjectURL(blob)}" download="compressed.mp4">下载</a></td>
-    </tr>`;
+    let crf;
+    if (videoMode.value === "quality") crf = 24;
+    else if (videoMode.value === "size") crf = 30;
+    else crf = 28;
+
+    await ffmpeg.run(
+      "-i", input,
+      "-vcodec", "libx264",
+      "-crf", String(crf),
+      "-preset", "veryfast",
+      output
+    );
+
+    const data = ffmpeg.FS("readFile", output);
+    const blob = new Blob([data.buffer], { type: "video/mp4" });
+    const rate = ((1 - blob.size / file.size) * 100).toFixed(1);
+
+    table.innerHTML += `
+      <tr>
+        <td>${file.name}</td>
+        <td>${(file.size/1024/1024).toFixed(2)} MB</td>
+        <td>${(blob.size/1024/1024).toFixed(2)} MB</td>
+        <td>${rate}%</td>
+        <td><a href="${URL.createObjectURL(blob)}" download="compressed_${file.name}">下载</a></td>
+      </tr>
+    `;
+
+    ffmpeg.FS("unlink", input);
+    ffmpeg.FS("unlink", output);
   }
-}
 
-/* ========== 链接解析（接口占位） ========== */
-async function parseAndCompress() {
-  alert(
-`这里需要你自己的解析接口，例如：
-POST https://api.xxx.com/parse
-body: { url: 分享链接 }
-
-返回：真实 mp4 地址
-
-前端拿到 mp4 后 → 直接走上面的压缩逻辑`
-  );
+  videoProgress.value = 0;
 }
 </script>
 
