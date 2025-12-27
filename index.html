@@ -1,193 +1,156 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>video of free</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-        #current-title {
-            font-size: 1.4em;
-            margin-bottom: 20px;
-            min-height: 1.4em;
-        }
-        #player {
-            width: 90vw;
-            max-width: 1200px;
-            height: auto;
-            background-color: #000;
-            border: 2px solid #333;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            width: 90vw;
-            max-width: 1200px;
-        }
-        #playlist {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        #playlist li {
-            padding: 10px 15px;
-            background-color: #222;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: background-color 0.3s;
-        }
-        #playlist li:hover, #playlist li.active {
-            background-color: #444;
-        }
-        #mode-select {
-            padding: 8px 12px;
-            font-size: 1em;
-            background-color: #222;
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 6px;
-        }
-        /* 竖屏时（手机）视频占满宽度，下方显示一首欧洲古代诗歌（莎士比亚第18首十四行诗中文译本） */
-        #poem {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #111;
-            border-radius: 8px;
-            max-width: 800px;
-            font-style: italic;
-            line-height: 1.8;
-            text-align: center;
-        }
-        @media (max-width: 768px) and (orientation: portrait) {
-            #player {
-                width: 100vw;
-                height: auto;
-            }
-            #poem {
-                display: block;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>video of free</title>
+
+<style>
+body {
+    background:#000;
+    color:#fff;
+    font-family:Arial;
+    margin:0;
+    padding:20px;
+    text-align:center;
+}
+#player {
+    width:90vw;
+    max-width:1200px;
+    border:2px solid #333;
+}
+.controls {
+    margin-top:20px;
+}
+#playlist {
+    list-style:none;
+    padding:0;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+}
+#playlist li {
+    background:#222;
+    padding:10px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+#playlist li.active {
+    background:#444;
+}
+select,label {
+    margin:8px;
+}
+.platform {
+    font-size:0.8em;
+    opacity:0.7;
+}
+</style>
 </head>
+
 <body>
-    <h1>video of free</h1>
-    <div id="current-title">video.1</div>
-    <video id="player" controls autoplay>
-        <source src="/TG-2025-05-09-225147363.mp4" type="video/mp4">
-        您的浏览器不支持视频播放。
-    </video>
 
-    <div class="controls">
-        <select id="mode-select">
-            <option value="single-loop" selected>单视频循环（默认）</option>
-            <option value="sequential">顺序播放</option>
-            <option value="random">随机播放</option>
-        </select>
+<h1>video of free</h1>
+<div id="current-title">video.1</div>
 
-        <ul id="playlist">
-            <li class="active" data-src="/TG-2025-05-09-225147363.mp4">video.1</li>
-            <li data-src="/mmexport1764756551925.mp4">video.2</li>
-            <li data-src="/VID_20251129190549.mp4">video.3</li>
-            <!-- 你可以继续在这里添加更多 <li data-src="你的路径" >视频名称</li> -->
-        </ul>
-    </div>
+<video id="player" controls autoplay loop>
+    <source src="/TG-2025-05-09-225147363.mp4" type="video/mp4">
+</video>
 
-    <div id="poem">
-        <strong>莎士比亚十四行诗 第18首（节选，中文译本）</strong><br><br>
-        我可否将你比作夏日晴空？<br>
-        你却更加可爱，更加温婉：<br>
-        狂风摧残五月娇嫩的花蕾，<br>
-        夏日的租期又未免太短：<br>
-        有时太阳的光辉太过灼热，<br>
-        他的金颜又常被乌云遮蔽；<br>
-        一切美色终会逐渐凋零，<br>
-        被机遇或自然的定律剥夺：<br>
-        但你的永恒之夏永不凋谢，<br>
-        也不会丧失你拥有的美貌；<br>
-        死神无法夸口你在他阴影下徘徊，<br>
-        因为你在不朽的诗行里与时间同长……<br>
-        <em>——威廉·莎士比亚（1564-1616）</em>
-    </div>
+<div class="controls">
 
-    <script>
-        const video = document.getElementById('player');
-        const titleDisplay = document.getElementById('current-title');
-        const playlistItems = document.querySelectorAll('#playlist li');
-        const modeSelect = document.getElementById('mode-select');
+<label>
+<input type="checkbox" id="externalMode">
+ 平台浏览模式（YouTube / TikTok / 抖音 / B站）
+</label>
 
-        let currentIndex = 0;
-        const videos = Array.from(playlistItems).map(li => ({
-            src: li.getAttribute('data-src'),
-            title: li.textContent.trim()
-        }));
+<br>
 
-        function loadVideo(index) {
-            currentIndex = index;
-            video.src = videos[index].src;
-            titleDisplay.textContent = videos[index].title;
-            playlistItems.forEach((li, i) => {
-                li.classList.toggle('active', i === index);
-            });
-            video.play();
+<select id="mode-select">
+    <option value="single-loop">单视频循环</option>
+    <option value="sequential">顺序播放</option>
+    <option value="random">随机播放</option>
+</select>
+
+<ul id="playlist">
+    <!-- 本地 -->
+    <li data-type="local" data-src="/TG-2025-05-09-225147363.mp4">
+        video.1 <span class="platform">LOCAL</span>
+    </li>
+
+    <!-- YouTube -->
+    <li data-type="youtube" data-url="https://www.youtube.com/watch?v=VIDEO_ID">
+        video.YouTube <span class="platform">YT</span>
+    </li>
+
+    <!-- TikTok -->
+    <li data-type="tiktok" data-url="https://www.tiktok.com/@user/video/123">
+        video.TikTok <span class="platform">TT</span>
+    </li>
+
+    <!-- 抖音 -->
+    <li data-type="douyin" data-url="https://www.douyin.com/video/123">
+        video.抖音 <span class="platform">DY</span>
+    </li>
+
+    <!-- Bilibili -->
+    <li data-type="bilibili" data-url="https://www.bilibili.com/video/BVxxxx">
+        video.Bilibili <span class="platform">BILI</span>
+    </li>
+</ul>
+
+</div>
+
+<script>
+const video = document.getElementById('player');
+const title = document.getElementById('current-title');
+const items = document.querySelectorAll('#playlist li');
+const externalMode = document.getElementById('externalMode');
+const modeSelect = document.getElementById('mode-select');
+
+let currentIndex = 0;
+
+items.forEach((li,index)=>{
+    li.addEventListener('click',()=>{
+        playItem(index);
+    });
+});
+
+function playItem(index){
+    const item = items[index];
+    const type = item.dataset.type;
+
+    items.forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+
+    title.textContent = item.textContent.trim();
+    currentIndex = index;
+
+    if (externalMode.checked && type !== 'local') {
+        window.open(item.dataset.url, '_blank');
+        return;
+    }
+
+    if (type === 'local') {
+        video.src = item.dataset.src;
+        video.play();
+    }
+}
+
+video.addEventListener('ended',()=>{
+    if (modeSelect.value === 'single-loop') {
+        video.play();
+    } else {
+        let next = currentIndex + 1;
+        if (modeSelect.value === 'random') {
+            next = Math.floor(Math.random()*items.length);
         }
+        if (next >= items.length) next = 0;
+        playItem(next);
+    }
+});
+</script>
 
-        // 点击播放列表切换视频
-        playlistItems.forEach((li, index) => {
-            li.addEventListener('click', () => {
-                loadVideo(index);
-            });
-        });
-
-        // 根据播放模式处理结束事件
-        video.addEventListener('ended', () => {
-            const mode = modeSelect.value;
-
-            if (mode === 'single-loop') {
-                video.play(); // 单视频循环：直接重新播放当前
-            } else if (mode === 'sequential') {
-                // 顺序播放：下一个（循环到开头）
-                const nextIndex = (currentIndex + 1) % videos.length;
-                loadVideo(nextIndex);
-            } else if (mode === 'random') {
-                // 随机播放：随机选择（不重复当前）
-                let nextIndex;
-                do {
-                    nextIndex = Math.floor(Math.random() * videos.length);
-                } while (nextIndex === currentIndex && videos.length > 1);
-                loadVideo(nextIndex);
-            }
-        });
-
-        // 切换播放模式时，调整 loop 属性（仅单视频循环需要原生 loop）
-        modeSelect.addEventListener('change', () => {
-            const mode = modeSelect.value;
-            video.loop = (mode === 'single-loop');
-        });
-
-        // 初始设置：单视频循环模式下开启原生 loop
-        video.loop = true;
-    </script>
 </body>
 </html>
