@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>图片 / 视频压缩（手机可用）</title>
+<title>图片 / 视频压缩（稳定版）</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body {
@@ -37,41 +37,42 @@ td,th {
   border-bottom: 1px solid #1e293b;
   padding: 6px;
 }
-progress { width: 100%; }
 a { color: #38bdf8; }
 small { color: #94a3b8; }
+#status { color:#fbbf24;margin:6px 0 }
 </style>
 </head>
 
 <body>
 
-<h2>📦 图片 / 视频压缩（手机 + GitHub Pages 可用）</h2>
+<h2>📦 图片 / 视频压缩（能压就行版）</h2>
 
 <div class="card">
-<h3>📷 图片压缩</h3>
+<h3>📷 图片压缩（完美）</h3>
 <input type="file" id="imgInput" accept="image/*" multiple>
-<button onclick="compressImages()">开始压缩</button>
+<button onclick="compressImages()">开始压缩图片</button>
 <table id="imgTable"></table>
 </div>
 
 <div class="card">
-<h3>🎬 视频压缩</h3>
+<h3>🎬 视频压缩（手机可用）</h3>
 <input type="file" id="videoInput" accept="video/*" multiple>
+
 <select id="mode">
-  <option value="auto">推荐</option>
+  <option value="auto">推荐（清晰 + 小）</option>
   <option value="quality">画质优先</option>
   <option value="size">体积最小</option>
 </select>
-<button onclick="compressVideos()">开始压缩</button>
-<progress id="progress" value="0" max="1"></progress>
+
+<button onclick="compressVideos()">开始压缩视频</button>
+<div id="status">未开始</div>
 <table id="videoTable"></table>
 </div>
 
-<!-- 单线程 ffmpeg.wasm -->
 <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 
 <script>
-/* ========== 图片 ========= */
+/* ===== 图片 ===== */
 async function compressImages() {
   imgTable.innerHTML =
     "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
@@ -101,23 +102,33 @@ async function compressImages() {
   }
 }
 
-/* ========== 视频 ========= */
+/* ===== 视频（不看进度，只等结果） ===== */
 let ffmpeg;
 
 async function compressVideos() {
+  if (videoInput.files.length === 0) {
+    alert("请选择视频");
+    return;
+  }
+
+  const status = document.getElementById("status");
+  status.textContent = "正在加载视频引擎（第一次会慢）…";
+
   if (!ffmpeg) {
     ffmpeg = FFmpeg.createFFmpeg({
       log: true,
-      corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
-      progress: p => progress.value = p.ratio
+      corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js"
     });
     await ffmpeg.load();
   }
+
+  status.textContent = "正在压缩视频，请不要关闭页面…";
 
   videoTable.innerHTML =
     "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
 
   let i = 0;
+
   for (const file of videoInput.files) {
     i++;
     const input = `in${i}.mp4`;
@@ -125,31 +136,34 @@ async function compressVideos() {
 
     ffmpeg.FS("writeFile", input, await FFmpeg.fetchFile(file));
 
-    let crf = mode.value==="quality"?24:mode.value==="size"?30:28;
+    let crf =
+      mode.value === "quality" ? 24 :
+      mode.value === "size" ? 30 : 28;
 
     await ffmpeg.run(
       "-i", input,
-      "-vcodec","libx264",
+      "-vcodec", "libx264",
       "-crf", String(crf),
       output
     );
 
     const data = ffmpeg.FS("readFile", output);
-    const blob = new Blob([data.buffer],{type:"video/mp4"});
+    const blob = new Blob([data.buffer], { type:"video/mp4" });
 
     videoTable.innerHTML += `
       <tr>
         <td>${file.name}</td>
         <td>${(file.size/1024/1024).toFixed(2)}MB</td>
         <td>${(blob.size/1024/1024).toFixed(2)}MB</td>
-        <td><a href="${URL.createObjectURL(blob)}" download="compressed_${file.name}">下载</a></td>
+        <td><a href="${URL.createObjectURL(blob)}"
+               download="compressed_${file.name}">下载</a></td>
       </tr>`;
 
-    ffmpeg.FS("unlink",input);
-    ffmpeg.FS("unlink",output);
+    ffmpeg.FS("unlink", input);
+    ffmpeg.FS("unlink", output);
   }
 
-  progress.value = 0;
+  status.textContent = "压缩完成 ✅";
 }
 </script>
 
