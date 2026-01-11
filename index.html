@@ -1,312 +1,185 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>video of free</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-        #current-title {
-            font-size: 1.4em;
-            margin-bottom: 20px;
-            min-height: 1.4em;
-        }
-        #player {
-            width: 90vw;
-            max-width: 1200px;
-            height: auto;
-            background-color: #000;
-            border: 2px solid #333;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            width: 90vw;
-            max-width: 1200px;
-        }
-        #playlist {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        #playlist li {
-            padding: 10px 15px;
-            background-color: #222;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: background-color 0.3s;
-        }
-        #playlist li:hover, #playlist li.active {
-            background-color: #444;
-        }
-        #mode-select {
-            padding: 8px 12px;
-            font-size: 1em;
-            background-color: #222;
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 6px;
-        }
-        /* 竖屏时（手机）视频占满宽度，下方显示一首欧洲古代诗歌（莎士比亚第18首十四行诗中文译本） */
-        #poem {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #111;
-            border-radius: 8px;
-            max-width: 800px;
-            font-style: italic;
-            line-height: 1.8;
-            text-align: center;
-        }
-        @media (max-width: 768px) and (orientation: portrait) {
-            #player {
-                width: 100vw;
-                height: auto;
-            }
-            #poem {
-                display: block;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>video of free</h1>
-    <div id="current-title">video.1</div>
-    <video id="player" controls autoplay>
-        <source src="/TG-2025-05-09-225147363.mp4" type="video/mp4">
-        您的浏览器不支持视频播放。
-    </video>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>程永昊生快</title>
 
-    <div class="controls">
-        <select id="mode-select">
-            <option value="single-loop" selected>单循环播放</option>
-            <option value="sequential">顺序播放</option>
-            <option value="random">随机播放</option>
-        </select>
+<style>
+* { box-sizing: border-box; }
 
-        <ul id="playlist">
-            <li class="active" data-src="/TG-2025-05-09-225147363.mp4">video.1</li>
-            <li data-src="/mmexport1764756551925.mp4">video.2</li>
-            <li data-src="/VID_20251129190549.mp4">video.3</li>
-            <li data-src="/usain.mp4">video.4</li>
-            <li data-src="/狗子装柿子.mp4">video.5</li>
-            <li data-src="【4K60帧 超清修复】G.E.M.邓紫棋｜泡沫｜我是歌手【收藏级画质】 [BV1PgmKY7EW7_p1].mp4">video.6</li>
-            <li data-src="/傻狗.mp4">video.5</li>
-            <li data-src="Vol.006 未曾出现的四楼 [2069389139].mp3">video.5</li>
-            <!-- 你可以继续在这里添加更多 <li data-src="你的路径" >视频名称</li> -->
-        </ul>
-    </div>
-
-    <div id="poem">
-        <strong>莎士比亚十四行诗 第18首（节选，中文译本）</strong><br><br>
-        我可否将你比作夏日晴空？<br>
-        你却更加可爱，更加温婉：<br>
-        狂风摧残五月娇嫩的花蕾，<br>
-        夏日的租期又未免太短：<br>
-        有时太阳的光辉太过灼热，<br>
-        他的金颜又常被乌云遮蔽；<br>
-        一切美色终会逐渐凋零，<br>
-        被机遇或自然的定律剥夺：<br>
-        但你的永恒之夏永不凋谢，<br>
-        也不会丧失你拥有的美貌；<br>
-        死神无法夸口你在他阴影下徘徊，<br>
-        因为你在不朽的诗行里与时间同长……<br>
-        <em>——威廉·莎士比亚（1564-1616）</em>
-    </div>
-
-    <script>
-        const video = document.getElementById('player');
-        const titleDisplay = document.getElementById('current-title');
-        const playlistItems = document.querySelectorAll('#playlist li');
-        const modeSelect = document.getElementById('mode-select');
-
-        let currentIndex = 0;
-        const videos = Array.from(playlistItems).map(li => ({
-            src: li.getAttribute('data-src'),
-            title: li.textContent.trim()
-        }));
-
-        function loadVideo(index) {
-            currentIndex = index;
-            video.src = videos[index].src;
-            titleDisplay.textContent = videos[index].title;
-            playlistItems.forEach((li, i) => {
-                li.classList.toggle('active', i === index);
-            });
-            video.play();
-        }
-
-        // 点击播放列表切换视频
-        playlistItems.forEach((li, index) => {
-            li.addEventListener('click', () => {
-                loadVideo(index);
-            });
-        });
-
-        // 根据播放模式处理结束事件
-        video.addEventListener('ended', () => {
-            const mode = modeSelect.value;
-
-            if (mode === 'single-loop') {
-                video.play(); // 单视频循环：直接重新播放当前
-            } else if (mode === 'sequential') {
-                // 顺序播放：下一个（循环到开头）
-                const nextIndex = (currentIndex + 1) % videos.length;
-                loadVideo(nextIndex);
-            } else if (mode === 'random') {
-                // 随机播放：随机选择（不重复当前）
-                let nextIndex;
-                do {
-                    nextIndex = Math.floor(Math.random() * videos.length);
-                } while (nextIndex === currentIndex && videos.length > 1);
-                loadVideo(nextIndex);
-            }
-        });
-
-        // 切换播放模式时，调整 loop 属性（仅单视频循环需要原生 loop）
-        modeSelect.addEventListener('change', () => {
-            const mode = modeSelect.value;
-            video.loop = (mode === 'single-loop');
-        });
-
-        // 初始设置：单视频循环模式下开启原生 loop
-        video.loop = true;
-    </script>
-</body>
-</html>
-
-<div class="card">
-<h3>🎬 视频压缩（手机可用）</h3>
-<input type="file" id="videoInput" accept="video/*" multiple>
-
-<select id="mode">
-  <option value="auto">推荐（清晰 + 小）</option>
-  <option value="quality">画质优先</option>
-  <option value="size">体积最小</option>
-</select>
-
-<button onclick="compressVideos()">开始压缩视频</button>
-<div id="status">未开始</div>
-<table id="videoTable"></table>
-</div>
-
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-
-<script>
-/* ===== 图片 ===== */
-async function compressImages() {
-  imgTable.innerHTML =
-    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
-
-  for (const file of imgInput.files) {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    await img.decode();
-
-    let best;
-    for (const q of [0.82,0.75,0.68]) {
-      const c = document.createElement("canvas");
-      c.width = img.width;
-      c.height = img.height;
-      c.getContext("2d").drawImage(img,0,0);
-      const b = await new Promise(r=>c.toBlob(r,"image/webp",q));
-      if (!best || b.size < best.size) best = b;
-    }
-
-    imgTable.innerHTML += `
-      <tr>
-        <td>${file.name}</td>
-        <td>${(file.size/1024).toFixed(1)}KB</td>
-        <td>${(best.size/1024).toFixed(1)}KB</td>
-        <td><a href="${URL.createObjectURL(best)}" download="${file.name}.webp">下载</a></td>
-      </tr>`;
-  }
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #2c2c54, #0f0f1a);
+    font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: #eee;
 }
 
-/* ===== 视频（不看进度，只等结果） ===== */
-let ffmpeg;
+/* 彩带 */
+.confetti {
+    position: fixed;
+    width: 6px;
+    height: 14px;
+    top: -20px;
+    animation: fall linear infinite;
+    opacity: 0.85;
+}
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); }
+}
 
-async function compressVideos() {
-  if (videoInput.files.length === 0) {
-    alert("请选择视频");
-    return;
-  }
+/* 气球 */
+.balloon {
+    position: fixed;
+    bottom: -120px;
+    width: 50px;
+    height: 65px;
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0.7;
+}
+.balloon::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 40px;
+    background: rgba(255,255,255,0.4);
+    left: 50%;
+    top: 65px;
+}
+@keyframes float {
+    to { transform: translateY(-130vh); }
+}
 
-  const status = document.getElementById("status");
-  status.textContent = "正在加载视频引擎（第一次会慢）…";
+/* 卡片 */
+.card {
+    width: 90%;
+    max-width: 520px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(14px);
+    border-radius: 26px;
+    padding: 38px 32px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    margin: 40px 0;
+    position: relative;
+    z-index: 2;
+}
 
-  if (!ffmpeg) {
-    ffmpeg = FFmpeg.createFFmpeg({
-      log: true,
-      corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js"
-    });
-    await ffmpeg.load();
-  }
+.title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: linear-gradient(90deg, #ff9f43, #feca57);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-  status.textContent = "正在压缩视频，请不要关闭页面…";
+.content p {
+    font-size: 16px;
+    line-height: 1.9;
+    margin: 14px 0;
+    color: #ddd;
+}
 
-  videoTable.innerHTML =
-    "<tr><th>文件</th><th>原始</th><th>压缩后</th><th>下载</th></tr>";
+.name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #feca57;
+}
 
-  let i = 0;
+.highlight {
+    color: #ffd369;
+    font-weight: 600;
+}
 
-  for (const file of videoInput.files) {
-    i++;
-    const input = `in${i}.mp4`;
-    const output = `out${i}.mp4`;
+.divider {
+    margin: 22px 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #666, transparent);
+}
 
-    ffmpeg.FS("writeFile", input, await FFmpeg.fetchFile(file));
+.footer {
+    margin-top: 26px;
+    text-align: right;
+    font-size: 14px;
+    color: #aaa;
+    font-style: italic;
+}
+</style>
+</head>
 
-    let crf =
-      mode.value === "quality" ? 24 :
-      mode.value === "size" ? 30 : 28;
+<body>
 
-    await ffmpeg.run(
-      "-i", input,
-      "-vcodec", "libx264",
-      "-crf", String(crf),
-      output
-    );
+<div class="card">
+    <div class="title">🎂 生日快乐 🎂</div>
 
-    const data = ffmpeg.FS("readFile", output);
-    const blob = new Blob([data.buffer], { type:"video/mp4" });
+    <div class="content">
+        <p>亲爱的 <span class="name">老程</span>：</p>
 
-    videoTable.innerHTML += `
-      <tr>
-        <td>${file.name}</td>
-        <td>${(file.size/1024/1024).toFixed(2)}MB</td>
-        <td>${(blob.size/1024/1024).toFixed(2)}MB</td>
-        <td><a href="${URL.createObjectURL(blob)}"
-               download="compressed_${file.name}">下载</a></td>
-      </tr>`;
+        <p>
+            在这个属于你的日子里，
+            愿你新的一岁，
+            <span class="highlight">平安顺遂、心有所成、事有所归</span>，
+            每一天都走得踏实而笃定。
+        </p>
 
-    ffmpeg.FS("unlink", input);
-    ffmpeg.FS("unlink", output);
-  }
+        <div class="divider"></div>
 
-  status.textContent = "压缩完成 ✅";
+        <p>
+            真心祝福你与弟妹，
+            相知相守，彼此扶持，
+            日子或平凡或热烈，
+            却始终温暖如初，
+            <span class="highlight">百年好合，携手到老</span>。
+        </p>
+
+        <p>
+            愿我们的友谊，
+            不惧时间，不怕距离，
+            未来无论各自走多远，
+            回头时依旧能笑着打声招呼。
+        </p>
+
+        <div class="divider"></div>
+
+        <p>
+            生日快乐，
+            愿你眼里有光，心中有路，
+            所行皆坦途，所愿终可期。
+        </p>
+    </div>
+
+    <div class="footer">
+        —— your friend zhang
+    </div>
+</div>
+
+<script>
+// 彩带
+for (let i = 0; i < 28; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+    c.style.animationDuration = (Math.random() * 3 + 3) + "s";
+    document.body.appendChild(c);
+}
+
+// 气球
+for (let i = 0; i < 6; i++) {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.style.left = Math.random() * 100 + "vw";
+    b.style.background = `hsl(${Math.random() * 360}, 70%, 65%)`;
+    b.style.animationDuration = (Math.random() * 4 + 8) + "s";
+    document.body.appendChild(b);
 }
 </script>
 
