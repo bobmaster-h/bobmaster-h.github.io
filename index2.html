@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>联系与交流群</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0e0e16, #1c1c2e);
+    color: #fff;
+}
+
+.header {
+    padding: 30px 20px 10px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.header p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #a8acff;
+}
+
+.section {
+    margin: 16px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6b6bff, #5efcff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    font-size: 18px;
+    color: #000;
+}
+
+.text {
+    flex: 1;
+}
+
+.title {
+    font-size: 16px;
+}
+
+.desc {
+    font-size: 12px;
+    color: #c8cbff;
+    margin-top: 2px;
+}
+
+.arrow {
+    font-size: 18px;
+    color: #8b8fff;
+}
+
+/* 二维码区域 */
+.qr-box {
+    margin: 30px 16px 10px;
+    text-align: center;
+}
+
+.qr-box img {
+    width: 180px;
+    max-width: 80%;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.qr-box p {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #cfd2ff;
+}
+
+.footer {
+    text-align: center;
+    margin: 20px 0 30px;
+    font-size: 12px;
+    color: #7f82ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>联系与交流群</h1>
+    <p>如有问题 / 合作 / 反馈，请通过以下方式</p>
+</div>
+
+<!-- 联系作者 -->
+<div class="section">
+    <a class="item" href="https://qm.qq.com/cgi-bin/qm/qr?k=&noverify=0&personal_qrcode_source=4">
+        <div class="icon">💬</div>
+        <div class="text">
+            <div class="title">联系作者</div>
+            <div class="desc">QQ：3795529359</div>
+        </div>
+        <div class="arrow">›</div>
+    </a>
+</div>
+
+<!-- 加入群聊 -->
+<div class="section">
+    <a class="item" href="https://qm.qq.com/cgi-bin/qm/qr?k=&noverify=0">
+        <div class="icon">👥</div>
+        <div class="text">
+            <div class="title">加入交流群</div>
+            <div class="desc">QQ群：160125263</div>
+        </div>
+        <div class="arrow">›</div>
+    </a>
+</div>
+
+<!-- 群二维码 -->
+<div class="qr-box">
+    <!-- 🔻 这里换成你的二维码图片路径 -->
+    <img src="group_qrcode.png" alt="QQ群二维码">
+    <p>扫码加入官方群聊</p>
+</div>
+
+<div class="footer">
+    © 2026 柠檬影视 · Lemon Video
+</div>
+
+</body>
+</html>
