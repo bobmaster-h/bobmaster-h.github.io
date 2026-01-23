@@ -6,151 +6,157 @@
 <title>Lemon Video</title>
 
 <style>
-:root {
-    --bg1: #0f0f1a;
-    --bg2: #1b1b2f;
-    --card: #1f1f38;
-    --accent: #5efcff;
-    --accent2: #7c7cff;
-    --text: #eaeaff;
-    --sub: #9aa0ff;
-}
-
 * {
     box-sizing: border-box;
-    font-family: "Segoe UI", "PingFang SC", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
-    background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(180deg, #0e0e16, #1c1c2e);
+    color: #fff;
 }
 
-/* 主容器 */
-.container {
-    width: 92%;
-    max-width: 420px;
-    background: rgba(31,31,56,0.9);
-    border-radius: 20px;
-    padding: 28px 22px;
-    box-shadow: 0 0 40px rgba(94,252,255,0.15);
+/* 顶部 */
+.header {
+    padding: 28px 20px 16px;
 }
 
-/* 标题 */
-h1 {
-    text-align: center;
-    margin: 0 0 8px;
-    font-size: 26px;
-    letter-spacing: 1px;
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
 }
 
-.subtitle {
-    text-align: center;
+.header p {
+    margin-top: 6px;
     font-size: 14px;
-    color: var(--sub);
-    margin-bottom: 24px;
+    color: #9fa3ff;
 }
 
-/* 按钮 */
-.link-btn {
+/* 列表容器 */
+.section {
+    margin: 18px 14px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+/* 单行 */
+.item {
     display: flex;
     align-items: center;
-    gap: 14px;
     padding: 14px 16px;
-    margin-bottom: 14px;
-    background: linear-gradient(135deg, #252550, #1c1c3a);
-    border-radius: 14px;
     text-decoration: none;
-    color: var(--text);
-    box-shadow: inset 0 0 0 1px rgba(124,124,255,0.15);
-    transition: all 0.25s ease;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.link-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 16px rgba(94,252,255,0.35);
+.item:last-child {
+    border-bottom: none;
 }
 
-/* 图标 */
 .icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--accent), var(--accent2));
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6b6bff, #5efcff);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #000;
-    font-weight: bold;
+    margin-right: 14px;
     font-size: 18px;
+    color: #000;
 }
 
-/* 按钮文字 */
-.btn-text {
+.text {
     flex: 1;
 }
 
-.btn-title {
+.text .title {
     font-size: 16px;
 }
 
-.btn-desc {
+.text .desc {
     font-size: 12px;
-    color: #bfc3ff;
+    color: #b8bbff;
+    margin-top: 2px;
+}
+
+.arrow {
+    color: #7f82ff;
+    font-size: 18px;
+}
+
+/* 说明文字 */
+.desc-box {
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #d8dbff;
 }
 
 /* 底部 */
 .footer {
     text-align: center;
-    margin-top: 22px;
+    margin: 28px 0;
     font-size: 12px;
-    color: #888cff;
+    color: #7f82ff;
 }
 </style>
 </head>
 
 <body>
-<div class="container">
+
+<div class="header">
     <h1>柠檬更新地址</h1>
-    <div class="subtitle">请从下方入口获取最新信息</div>
+    <p>请通过以下入口获取最新版本与帮助</p>
+</div>
 
-    <!-- 更新软件 -->
-    <a class="link-btn" href="https://share.feijipan.com/s/pjWaa15C">
+<div class="section">
+    <a class="item" href="https://share.feijipan.com/s/pjWaa15C">
         <div class="icon">⬆</div>
-        <div class="btn-text">
-            <div class="btn-title">更新软件</div>
-            <div class="btn-desc">获取最新版本与修复内容</div>
+        <div class="text">
+            <div class="title">更新软件</div>
+            <div class="desc">下载最新版本，修复已知问题</div>
         </div>
+        <div class="arrow">›</div>
     </a>
 
-<!-- 联系作者（QQ） -->
-<a class="link-btn" href="https://wpa.qq.com/msgrd?v=3&uin=3795529359&site=qq&menu=yes">
-    <div class="icon">👤</div>
-    <div class="btn-text">
-        <div class="btn-title">联系作者（QQ）</div>
-        <div class="btn-desc">问题反馈 / 建议交流</div>
-    </div>
-</a>
+    <a class="item" href="https://qun.qq.com/universal-share/share?ac=1&authKey=SFCLZQYBMsA4iRvx%2FM1TgybUjR9Ohz0vuYHEOtViYOGxvDF8OvXQ%2FqVlbEOPvRFV">
+        <div class="icon">👤</div>
+        <div class="text">
+            <div class="title">联系作者</div>
+            <div class="desc">加入交流群后联系作者</div>
+        </div>
+        <div class="arrow">›</div>
+    </a>
 
-    <!-- 加入群聊 -->
-    <a class="link-btn" href="https://qun.qq.com/universal-share/share?ac=1&authKey=SFCLZQYBMsA4iRvx%2FM1TgybUjR9Ohz0vuYHEOtViYOGxvDF8OvXQ%2FqVlbEOPvRFV&busi_data=eyJncm91cENvZGUiOiIxNjAxMjUyNjMiLCJ0b2tlbiI6ImtJVDJPdjZ5c2lxOVBiZHl4SThKUXJiNkNsZGhLN1RBZDZjTEdOQzRaYVY5bTRnWWY3MkFWTUE4NUpIaEdpQWUiLCJ1aW4iOiIyNDEzMzI4MDkyIn0%3D&data=uurbeay8QI9jgfj3kzOTOSHePOIov0T-MNmSxf3f0g4XVEGV4dFApf5GCu9YSzJKGoJHsrOlI3IuSmjNwBD8xg&svctype=4&tempid=h5_group_info">
+    <a class="item" href="https://qun.qq.com/universal-share/share?ac=1&authKey=SFCLZQYBMsA4iRvx%2FM1TgybUjR9Ohz0vuYHEOtViYOGxvDF8OvXQ%2FqVlbEOPvRFV">
         <div class="icon">💬</div>
-        <div class="btn-text">
-            <div class="btn-title">加入交流群</div>
-            <div class="btn-desc">用户讨论 & 使用教程</div>
+        <div class="text">
+            <div class="title">加入交流群</div>
+            <div class="desc">问题反馈 / 使用交流</div>
         </div>
+        <div class="arrow">›</div>
     </a>
+</div>
 
-
-
-    <div class="footer">
-        © 2026 柠檬影视 · All Rights Reserved
+<div class="section">
+    <div class="desc-box">
+        <strong>使用说明：</strong><br><br>
+        1️⃣ 本软件仅作为视频聚合与学习交流用途。<br>
+        2️⃣ 若出现播放异常，请优先更新至最新版本。<br>
+        3️⃣ 软件内资源来自网络，如有侵权请联系作者处理。<br>
+        4️⃣ 推荐加入交流群获取最新公告与测试版本。<br>
+        5️⃣ 请勿传播、售卖本软件，否则将停止技术支持。
     </div>
 </div>
+
+<div class="footer">
+    © 2026 柠檬影视 · Lemon Video
+</div>
+
 </body>
 </html>
