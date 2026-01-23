@@ -3,183 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>程永昊生快</title>
+<title>软件官方主页</title>
 
 <style>
-* { box-sizing: border-box; }
+:root {
+    --bg1: #0f0f1a;
+    --bg2: #1b1b2f;
+    --card: #1f1f38;
+    --accent: #5efcff;
+    --accent2: #7c7cff;
+    --text: #eaeaff;
+    --sub: #9aa0ff;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", "PingFang SC", sans-serif;
+}
 
 body {
     margin: 0;
     min-height: 100vh;
-    background: radial-gradient(circle at top, #2c2c54, #0f0f1a);
-    font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+    color: var(--text);
     display: flex;
-    justify-content: center;
     align-items: center;
-    overflow-x: hidden;
-    overflow-y: auto;
-    color: #eee;
+    justify-content: center;
 }
 
-/* 彩带 */
-.confetti {
-    position: fixed;
-    width: 6px;
-    height: 14px;
-    top: -20px;
-    animation: fall linear infinite;
-    opacity: 0.85;
-}
-@keyframes fall {
-    to { transform: translateY(110vh) rotate(360deg); }
+/* 主容器 */
+.container {
+    width: 92%;
+    max-width: 420px;
+    background: rgba(31,31,56,0.9);
+    border-radius: 20px;
+    padding: 28px 22px;
+    box-shadow: 0 0 40px rgba(94,252,255,0.15);
 }
 
-/* 气球 */
-.balloon {
-    position: fixed;
-    bottom: -120px;
-    width: 50px;
-    height: 65px;
-    border-radius: 50%;
-    animation: float linear infinite;
-    opacity: 0.7;
-}
-.balloon::after {
-    content: "";
-    position: absolute;
-    width: 2px;
-    height: 40px;
-    background: rgba(255,255,255,0.4);
-    left: 50%;
-    top: 65px;
-}
-@keyframes float {
-    to { transform: translateY(-130vh); }
-}
-
-/* 卡片 */
-.card {
-    width: 90%;
-    max-width: 520px;
-    background: rgba(255,255,255,0.07);
-    backdrop-filter: blur(14px);
-    border-radius: 26px;
-    padding: 38px 32px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-    margin: 40px 0;
-    position: relative;
-    z-index: 2;
-}
-
-.title {
+/* 标题 */
+h1 {
     text-align: center;
-    font-size: 30px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    background: linear-gradient(90deg, #ff9f43, #feca57);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin: 0 0 8px;
+    font-size: 26px;
+    letter-spacing: 1px;
 }
 
-.content p {
-    font-size: 16px;
-    line-height: 1.9;
-    margin: 14px 0;
-    color: #ddd;
-}
-
-.name {
-    font-size: 18px;
-    font-weight: bold;
-    color: #feca57;
-}
-
-.highlight {
-    color: #ffd369;
-    font-weight: 600;
-}
-
-.divider {
-    margin: 22px 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #666, transparent);
-}
-
-.footer {
-    margin-top: 26px;
-    text-align: right;
+.subtitle {
+    text-align: center;
     font-size: 14px;
-    color: #aaa;
-    font-style: italic;
+    color: var(--sub);
+    margin-bottom: 24px;
+}
+
+/* 按钮 */
+.link-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #252550, #1c1c3a);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px rgba(124,124,255,0.15);
+    transition: all 0.25s ease;
+}
+
+.link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 16px rgba(94,252,255,0.35);
+}
+
+/* 图标 */
+.icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* 按钮文字 */
+.btn-text {
+    flex: 1;
+}
+
+.btn-title {
+    font-size: 16px;
+}
+
+.btn-desc {
+    font-size: 12px;
+    color: #bfc3ff;
+}
+
+/* 底部 */
+.footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 12px;
+    color: #888cff;
 }
 </style>
 </head>
 
 <body>
+<div class="container">
+    <h1>软件官方主页</h1>
+    <div class="subtitle">请从下方入口获取最新信息</div>
 
-<div class="card">
-    <div class="title">🎂 生日快乐 🎂</div>
+    <!-- 更新软件 -->
+    <a class="link-btn" href="https://example.com/update">
+        <div class="icon">⬆</div>
+        <div class="btn-text">
+            <div class="btn-title">更新软件</div>
+            <div class="btn-desc">获取最新版本与修复内容</div>
+        </div>
+    </a>
 
-    <div class="content">
-        <p>亲爱的 <span class="name">老程</span>：</p>
+    <!-- 联系作者 -->
+    <a class="link-btn" href="https://example.com/contact">
+        <div class="icon">👤</div>
+        <div class="btn-text">
+            <div class="btn-title">联系作者</div>
+            <div class="btn-desc">反馈问题 / 合作交流</div>
+        </div>
+    </a>
 
-        <p>
-            在这个属于你的日子里，
-            愿你新的一岁，
-            <span class="highlight">平安顺遂、心有所成、事有所归</span>，
-            每一天都走得踏实而笃定。
-        </p>
+    <!-- 加入群聊 -->
+    <a class="link-btn" href="https://example.com/group">
+        <div class="icon">💬</div>
+        <div class="btn-text">
+            <div class="btn-title">加入交流群</div>
+            <div class="btn-desc">用户讨论 & 使用教程</div>
+        </div>
+    </a>
 
-        <div class="divider"></div>
-
-        <p>
-            真心祝福你与弟妹，
-            相知相守，彼此扶持，
-            日子或平凡或热烈，
-            却始终温暖如初，
-            <span class="highlight">百年好合，携手到老</span>。
-        </p>
-
-        <p>
-            愿我们的友谊，
-            不惧时间，不怕距离
-        </p>
-
-        <div class="divider"></div>
-
-        <p>
-            生日快乐，
-            愿你眼里有光，心中有路，
-            所行皆坦途，所愿终可期。
-        </p>
-    </div>
+    <!-- 使用说明 -->
+    <a class="link-btn" href="https://example.com/help">
+        <div class="icon">📄</div>
+        <div class="btn-text">
+            <div class="btn-title">使用说明</div>
+            <div class="btn-desc">常见问题与教程</div>
+        </div>
+    </a>
 
     <div class="footer">
-        —— your friend zhang
+        © 2026 YourApp Name · All Rights Reserved
     </div>
 </div>
-
-<script>
-// 彩带
-for (let i = 0; i < 28; i++) {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
-    c.style.animationDuration = (Math.random() * 3 + 3) + "s";
-    document.body.appendChild(c);
-}
-
-// 气球
-for (let i = 0; i < 6; i++) {
-    const b = document.createElement("div");
-    b.className = "balloon";
-    b.style.left = Math.random() * 100 + "vw";
-    b.style.background = `hsl(${Math.random() * 360}, 70%, 65%)`;
-    b.style.animationDuration = (Math.random() * 4 + 8) + "s";
-    document.body.appendChild(b);
-}
-</script>
-
 </body>
 </html>
