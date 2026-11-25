@@ -1,153 +1,41 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lemon Video</title>
-<style>
-* {
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-}
-body {
-    margin: 0;
-    background: linear-gradient(180deg, #0e0e16, #1c1c2e);
-    color: #fff;
-}
-.header {
-    padding: 30px 20px 16px;
-}
-.header h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 600;
-}
-.header p {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #a8acff;
-}
-.section {
-    margin: 16px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(16px);
-    border-radius: 18px;
-    overflow: hidden;
-}
-.item {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    color: #fff;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.item:last-child {
-    border-bottom: none;
-}
-.icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #6b6bff, #5efcff);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 14px;
-    font-size: 18px;
-    color: #000;
-}
-.text {
-    flex: 1;
-}
-.title {
-    font-size: 16px;
-}
-.desc {
-    font-size: 12px;
-    color: #c8cbff;
-    margin-top: 2px;
-}
-.arrow {
-    font-size: 18px;
-    color: #8b8fff;
-}
-.tip {
-    padding: 16px;
-    font-size: 13px;
-    color: #cfd2ff;
-    line-height: 1.7;
-}
-.footer {
-    text-align: center;
-    margin: 24px 0;
-    font-size: 12px;
-    color: #7f82ff;
-}
-</style>
-</head>
-<body>
 <div class="header">
-    <h1>柠檬更新地址</h1>
-    <p>请通过以下入口获取最新版本与帮助</p>
-</div>
-<!-- 更新 -->
-<div class="section">
-    <a class="item" href="https://share.feijipan.com/s/pjWaa15C">
-        <div class="icon">⬆</div>
-        <div class="text">
-            <div class="title">更新软件</div>
-            <div class="desc">下载最新版本</div>
+    <div class="brand">
+        <div class="logo">L</div>
+        <div>
+            <div class="brand-name">Lemon <span>Video</span></div>
+            <div class="subtitle">IMMERSIVE VIDEO EXPERIENCE</div>
         </div>
-        <div class="arrow">›</div>
-    </a>
-</div>
-<!-- 加入群聊 -->
-<div class="section">
-    <a class="item" href="tencent://message/?uin=3395282861">
-        <div class="icon">👥</div>
-        <div class="text">
-            <div class="title">加入群聊</div>
-            <div class="desc">QQ：3395282861｜官方群 / 公告 / 交流</div>
-        </div>
-        <div class="arrow">›</div>
-    </a>
-</div>
-<!-- 联系作者 -->
-<div class="section">
-    <a class="item" href="tencent://message/?uin=3395282861">
-        <div class="icon">💬</div>
-        <div class="text">
-            <div class="title">联系作者</div>
-            <div class="desc">QQ：3395282861｜合作 / 问题反馈</div>
-        </div>
-        <div class="arrow">›</div>
-    </a>
-</div>
+    </div>
 
-<!-- =====新增：视频播放器按钮===== -->
-<div class="section">
-    <a class="item" href="player.html">
-        <div class="icon">▶</div>
-        <div class="text">
-            <div class="title">视频播放器</div>
-            <div class="desc">打开本地视频播放页面</div>
-        </div>
-        <div class="arrow">›</div>
-    </a>
-</div>
-
-<div class="section">
-    <div class="tip">
-        使用说明：<br><br>
-        - 本页面为官方更新与引导入口。<br>
-        - QQ：3395282861，加入可获取最新公告与测试版。<br>
-        - 联系作者用于合作或重要问题。<br>
-        - 所有入口均为官方页面。
+    <div class="status">
+        <span class="status-dot"></span>
+        PLAYER READY
     </div>
 </div>
-<div class="footer">
-    © 2026 柠檬影视 · Lemon Video
+
+<div class="video-card">
+    <div class="video-inner">
+        <video
+            id="videoPlayer"
+            controls
+            playsinline
+            webkit-playsinline
+            preload="metadata"
+            poster=""
+        >
+            <source src="这里填你的视频地址.mp4" type="video/mp4">
+            您的浏览器不支持视频播放。
+        </video>
+    </div>
 </div>
-</body>
-</html>
+
+<div class="footer">
+    <div class="footer-left">
+        <span class="lemon-icon">✦</span>
+        <span>Enjoy Every Moment</span>
+    </div>
+
+    <div class="footer-right">
+        LEMON PLAYER · 2026
+    </div>
+</div>
