@@ -1,41 +1,89 @@
-<div class="header">
-    <div class="brand">
-        <div class="logo">L</div>
-        <div>
-            <div class="brand-name">Lemon <span>Video</span></div>
-            <div class="subtitle">IMMERSIVE VIDEO EXPERIENCE</div>
+<!DOCTYPE html><html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e0e16">
+    <title>Lemon Video</title><style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont,
+                     "PingFang SC", sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0e0e16, #1c1c2e);
+        color: #fff;
+    }
+
+    .section {
+        margin: 16px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #6b6bff, #5efcff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 14px;
+        font-size: 18px;
+        color: #000;
+    }
+
+    .text {
+        flex: 1;
+    }
+
+    .title {
+        font-size: 16px;
+    }
+
+    .desc {
+        font-size: 12px;
+        color: #c8cbff;
+        margin-top: 4px;
+    }
+
+    .arrow {
+        font-size: 22px;
+        color: #8b8fff;
+    }
+
+    .item:active {
+        background: rgba(255, 255, 255, 0.08);
+    }
+</style>
+
+</head><body><div class="section">
+    <a class="item" href="player.html">
+        <div class="icon">▶</div>
+
+        <div class="text">
+            <div class="title">视频播放器</div>
+            <div class="desc">打开视频播放页面</div>
         </div>
-    </div>
 
-    <div class="status">
-        <span class="status-dot"></span>
-        PLAYER READY
-    </div>
+        <div class="arrow">›</div>
+    </a>
 </div>
 
-<div class="video-card">
-    <div class="video-inner">
-        <video
-            id="videoPlayer"
-            controls
-            playsinline
-            webkit-playsinline
-            preload="metadata"
-            poster=""
-        >
-            <source src="这里填你的视频地址.mp4" type="video/mp4">
-            您的浏览器不支持视频播放。
-        </video>
-    </div>
-</div>
-
-<div class="footer">
-    <div class="footer-left">
-        <span class="lemon-icon">✦</span>
-        <span>Enjoy Every Moment</span>
-    </div>
-
-    <div class="footer-right">
-        LEMON PLAYER · 2026
-    </div>
-</div>
+</body>
+</html>
